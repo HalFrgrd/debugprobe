@@ -114,16 +114,28 @@ void usb_thread(void *ptr)
 #ifdef PROBE_USB_CONNECTED_LED
     gpio_init(PROBE_USB_CONNECTED_LED);
     gpio_set_dir(PROBE_USB_CONNECTED_LED, GPIO_OUT);
+#if defined(PROBE_LEDS_ACTIVE_LOW)
+    gpio_put(PROBE_USB_CONNECTED_LED, 1);
+#else
+    gpio_put(PROBE_USB_CONNECTED_LED, 0);
+#endif
 #endif
     TickType_t wake;
     wake = xTaskGetTickCount();
     do {
         tud_task();
 #ifdef PROBE_USB_CONNECTED_LED
+#if defined(PROBE_LEDS_ACTIVE_LOW)
+        if (gpio_get(PROBE_USB_CONNECTED_LED) && tud_ready())
+            gpio_put(PROBE_USB_CONNECTED_LED, 0);
+        else
+            gpio_put(PROBE_USB_CONNECTED_LED, 1);
+#else
         if (!gpio_get(PROBE_USB_CONNECTED_LED) && tud_ready())
             gpio_put(PROBE_USB_CONNECTED_LED, 1);
         else
             gpio_put(PROBE_USB_CONNECTED_LED, 0);
+#endif
 #endif
         // implied bus-reset detection
         if (!tud_connected() && was_configured)

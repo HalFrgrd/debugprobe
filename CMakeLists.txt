@@ -67,7 +67,15 @@ target_compile_definitions (debugprobe PRIVATE
 )
 
 option (DEBUG_ON_PICO "Compile firmware for the Pico instead of Debug Probe" OFF)
-if (DEBUG_ON_PICO)
+option (DEBUG_ON_XIAO "Compile firmware for Seeed Studio XIAO RP2040 instead of Debug Probe" OFF)
+if (DEBUG_ON_XIAO OR PICO_BOARD STREQUAL "seeed_xiao_rp2040")
+    target_compile_definitions (debugprobe PRIVATE
+	DEBUG_ON_XIAO=1
+    )
+    set_target_properties(debugprobe PROPERTIES
+        OUTPUT_NAME "debugprobe_on_xiao_rp2040"
+    )
+elseif (DEBUG_ON_PICO)
     target_compile_definitions (debugprobe PRIVATE
 	DEBUG_ON_PICO=1
     )

@@ -504,7 +504,11 @@ It is recommended to provide the following LEDs for status indication:
 */
 __STATIC_INLINE void LED_CONNECTED_OUT (uint32_t bit) {
 #ifdef PROBE_DAP_CONNECTED_LED
+#if defined(PROBE_LEDS_ACTIVE_LOW)
+  gpio_put(PROBE_DAP_CONNECTED_LED, !bit);
+#else
   gpio_put(PROBE_DAP_CONNECTED_LED, bit);
+#endif
 #endif
 }
 
@@ -515,7 +519,11 @@ __STATIC_INLINE void LED_CONNECTED_OUT (uint32_t bit) {
 */
 __STATIC_INLINE void LED_RUNNING_OUT (uint32_t bit) {
 #ifdef PROBE_DAP_RUNNING_LED
+#if defined(PROBE_LEDS_ACTIVE_LOW)
+  gpio_put(PROBE_DAP_RUNNING_LED, !bit);
+#else
   gpio_put(PROBE_DAP_RUNNING_LED, bit);
+#endif
 #endif
 }
 
@@ -567,10 +575,20 @@ __STATIC_INLINE void DAP_SETUP (void) {
 #ifdef PROBE_DAP_CONNECTED_LED
     gpio_init(PROBE_DAP_CONNECTED_LED);
     gpio_set_dir(PROBE_DAP_CONNECTED_LED, GPIO_OUT);
+#if defined(PROBE_LEDS_ACTIVE_LOW)
+    gpio_put(PROBE_DAP_CONNECTED_LED, 1);
+#else
+    gpio_put(PROBE_DAP_CONNECTED_LED, 0);
+#endif
 #endif
 #ifdef PROBE_DAP_RUNNING_LED
     gpio_init(PROBE_DAP_RUNNING_LED);
     gpio_set_dir(PROBE_DAP_RUNNING_LED, GPIO_OUT);
+#if defined(PROBE_LEDS_ACTIVE_LOW)
+    gpio_put(PROBE_DAP_RUNNING_LED, 1);
+#else
+    gpio_put(PROBE_DAP_RUNNING_LED, 0);
+#endif
 #endif
 }
 
